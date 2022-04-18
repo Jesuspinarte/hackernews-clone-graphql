@@ -24,9 +24,6 @@ const resolvers = {
   Vote,
 };
 
-const auxToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTY1MDE4MjgxOX0.D1cqSCdpy-tfkIVG40AMJf_CS7KT8LQ-jDQo6Gw2L4A";
-
 const server = new ApolloServer({
   typeDefs: loadFile("./src/schema.graphql"),
   resolvers,
@@ -34,14 +31,11 @@ const server = new ApolloServer({
     if (connection) {
       return { ...connection.context, prisma, pubsub };
     } else {
-      const auxReq = { ...req };
-      req.headers.authorization = auxToken;
-
       return {
-        ...auxReq,
+        ...req,
         prisma,
         pubsub,
-        userId: req && auxReq.headers.authorization ? getUserId(auxReq) : null,
+        userId: req && req.headers.authorization ? getUserId(req) : null,
       };
     }
   },
